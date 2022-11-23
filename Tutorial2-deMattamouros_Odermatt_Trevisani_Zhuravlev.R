@@ -69,6 +69,21 @@ data %>% count(children) # the highest number is 296 (1)
 
 ####  3  ####
 
+a=levels(data$region)
+b=length(a)
+s.m=c()
+for (i in 1:b){
+  c=length(which(data$region==a[i]&data$smoker=="yes"))/length(which(data$region==a[i]))
+  
+  sss=paste("The share of smokers in", a[i],"is",as.character(c))
+  
+  print(sss)
+  s.m=c(s.m, c)
+}
+names(s.m)=a
+
+names(s.m)[s.m==min(s.m)]
+
 #### 4 ####
 ggplot(data=data)+
   geom_point(aes(x=age,y=charges,colour=smoker))+
