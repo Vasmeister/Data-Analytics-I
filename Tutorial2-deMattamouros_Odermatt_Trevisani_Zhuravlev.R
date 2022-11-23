@@ -93,3 +93,7 @@ boxplot<-function(data_inp, split_var){
     geom_boxplot()+
     labs(x=split_var)+theme_bw()}
 boxplot(data,"region")
+# The other variable that is passed as the argument is the region.
+# There we can see a difference amongst the BMIs in the different region: 
+# the BMI seems to be higher in the Southeast region.
+
