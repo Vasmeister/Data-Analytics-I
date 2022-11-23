@@ -59,7 +59,7 @@ library(ggplot2)
 ####  1  ####
 # 7 x 1204
 nrow(data) # observations =1204
-ncol(data) # covariates   =7
+ncol(data) # covariates   =7    (assuming all of the columns are covariates, and there is no dependent variable)
 
 
 ####  2  ####
