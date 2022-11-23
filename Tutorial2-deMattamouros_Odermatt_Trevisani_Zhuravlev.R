@@ -73,6 +73,7 @@ data %>% count(children) # the highest number is 296 (1)
 ggplot(data=data)+
   geom_point(aes(x=age,y=charges,colour=smoker))+
   theme_bw()
+# We can find the following patterns:
 # We can see from the scatter plot that the charges for medical bills for smokers are
 # on average much higher than the charges for people who don't smoke. Having the age
 # variable on the x-axis, we can oberve that the charges are correlated with the age of the person.
