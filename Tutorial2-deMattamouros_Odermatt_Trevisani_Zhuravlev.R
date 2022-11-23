@@ -58,8 +58,8 @@ library(ggplot2)
 
 ####  1  ####
 # 7 x 1204
-nrow(data)
-ncol(data)
+nrow(data) # observations =1204
+ncol(data) # covariates   =7
 
 
 ####  2  ####
