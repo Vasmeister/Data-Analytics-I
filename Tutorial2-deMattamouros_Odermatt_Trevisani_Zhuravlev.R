@@ -65,5 +65,6 @@ ncol(data) # covariates   =7
 ####  2  ####
 # What is the highest number of children who are covered by AT LEAST one health insurance?
 data %>% count(children) # the highest number is 296 (1)
+# BUT could be    max(data$children)   =5    from last year
 
 ####  3  ####
