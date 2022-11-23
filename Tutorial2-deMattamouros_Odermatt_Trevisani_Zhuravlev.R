@@ -68,3 +68,13 @@ data %>% count(children) # the highest number is 296 (1)
 # BUT could be    max(data$children)   =5    from last year
 
 ####  3  ####
+
+#### 4 ####
+ggplot(data=data)+
+  geom_point(aes(x=age,y=charges,colour=smoker))+
+  theme_bw()
+# We can see from the scatter plot that...
+
+#### 5 ####
+
+#### 6 ####
