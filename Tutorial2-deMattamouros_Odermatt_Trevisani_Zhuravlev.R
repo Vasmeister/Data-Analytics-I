@@ -79,5 +79,17 @@ ggplot(data=data)+
 
 
 #### 5 ####
+plot2 <-function(data_inp,x.variable,y.variable,color.variable){
+  ggplot(data=data_inp)+
+    geom_point(aes(x =get(x.variable),y=get(y.variable),colour=get(color.variable)))+
+    labs(x=x.variable,y=y.variable,colour=color.variable)+
+    theme_bw()}
+plot2(data,"bmi","charges","sex")
+
 
 #### 6 ####
+boxplot<-function(data_inp, split_var){
+  ggplot(data=data_inp,aes(x =get(split_var),y=bmi))+
+    geom_boxplot()+
+    labs(x=split_var)+theme_bw()}
+boxplot(data,"region")
