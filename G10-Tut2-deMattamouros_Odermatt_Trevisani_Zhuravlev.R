@@ -29,14 +29,14 @@
 ## Topic: Model Evaluation
 ###############################################################################
  ------------------------------------------------------------------------------
-#Step 1: Set the working directory:
-#Find which directory you are currently working in
+# Step 1: Set the working directory:
+# Find which directory you are currently working in
 ddpath 
 getwd()
-#Set the directory you would like to work in
+# Set the directory you would like to work in
 setwd() #in our case we insert "~/Data Analytics I - Predictive Econometrics/Lecture 2"
 
-#Download the data
+# Download the data
 load("insurance-all.Rdata") # Load data
 
 #############################
@@ -66,7 +66,9 @@ ncol(data) # covariates   =7    (assuming all of the columns are covariates, and
 ####  2  ####
 # What is the highest number of children who are covered by AT LEAST one health insurance?
 data %>% count(children) # the highest number is 296 (1)
-# BUT could be    max(data$children)   =5    from last year
+
+# However, if the question adresses the highest number of children per single household who is covered by health insurance we find to folowing answer:  
+max(data$children)  # the highest n. of children is 5 per 14 households
 
 # ------------------------------------------------------------------------------
 ####  3  ####
@@ -86,7 +88,7 @@ names(s.m)=a
 
 names(s.m)[s.m==min(s.m)]
 # -------------------------------
-#Alternative with matrix table
+# Alternative with matrix table
 cond_matrix = matrix(NA, nrow=length(levels(data$smoker)), ncol=length(levels(data$region)))
 
 cond_matrix # the matrix is indeed empty and full of NA
@@ -106,28 +108,27 @@ for (a in c(1:4)) {
 
 print(cond_matrix) # the matrix has the full answer summed in a table for each region
 
-#region with the lowest share of smokers: northwest, the share is
-min(cond_matrix[2,]) #0.1689655
+# region with the lowest share of smokers: northwest, the share is
+min(cond_matrix[2,]) # 0.1689655
 
 # ------------------------------------------------------------------------------
 #### 4 ####
 ggplot(data, aes(x=age, y=charges, color=smoker)) +
   geom_point(na.rm=TRUE) +
-  ggtitle("Scatter Plot of Age and Charges Given Smoking Status") + ylab("Charges") + xlab("Age") +
-  geom_smooth(method = "lm", se = FALSE) +
-  theme_bw()
+  ggtitle("Scatter Plot of Age vs. Charges Given Smoking Status") + ylab("Charges") + xlab("Age") +
+  geom_smooth(method = "lm", se = FALSE)
 
-# We can find the following patterns:
-# We can see from the scatter plot that the charges for medical bills for smokers are
-# on average much higher than the charges for people who don't smoke. Having the age
-# variable on the x-axis, we can oberve that the charges are correlated with the age of the person.
+# From the scatter plot we find the following patterns:
+# We see that the charges for medical bills for smokers are on average
+# much higher than the charges for people who don't smoke. Having the age
+# variable on the x-axis, we oberve that the charges correlate with age. 
+# As people age, they should expect their medical charges to increase.
 
 #------------------------------------------------------------------------------
-#We observe that there is an overall positive correlation for both categories of clients
-#As patients age, they should expect their medical charges to increase.
-#However, we can clearly distinguish how smokers pay greater charges on average than
-#non smokers. Moreover, the data for smokers is more dispersed around the scatter plot.
-#While controlling for age, the variance in charges for smokers is greater than for non smokers.
+# We observe that there is an overall positive correlation between the level of charge and the age 
+# for both non- and smokers. However, we can clearly distinguish how smokers pay greater charges 
+# on average than non-smokers. Moreover, the data for smokers is more dispersed around the scatter plot.
+# While controlling for age, the variance in charges for smokers is greater than for non smokers.
 
 # ------------------------------------------------------------------------------
 #### 5 ####
@@ -136,28 +137,29 @@ compact_scatter_plot <-function(data_inp,x.variable,y.variable,color.variable){
     ggplot(data_inp, aes(x=get(x.variable), y=get(y.variable), color=get(color.variable)))+ 
     geom_point(na.rm=TRUE)+ ggtitle("Scatter Plot") +
     labs(x=x.variable,y=y.variable,colour=color.variable)+
-    geom_smooth(method = "lm", se = FALSE)+
-    theme_bw()}
+    geom_smooth(method = "lm", se = FALSE)
+}
 
-#Execute the function
+# Execute the function
 compact_scatter_plot(data,"bmi","charges","sex")
 
-#We observe that as bmi increases, the variance of charges also increases, therefore
-#the data has heteroskedasticity implied in it. Moreover, we observe in general
-#a weakly positive correlation between the bmi and charges, more so for males. 
-#A possible explanation could be that males are more likely to afford medical costs.
-#A possible way to improve the analysis, is by also accounting for the wage differences of 
+# We observe that as bmi increases, the variance of charges also increases, therefore
+# the data has heteroskedasticity implied in it. Moreover, we observe in general
+# a weakly positive correlation between the bmi and charges, more so for males. 
+# A possible explanation could be that males are more likely to afford medical costs.
+# A possible way to improve the analysis, is by also accounting for the wage differences of 
 # between individuals.
 
 # ------------------------------------------------------------------------------
 #### 6 ####
-#Create a function
+# Create a function
 split_boxplot_bmi<-function(data_inp, split_var){
   ggplot(data=data_inp,aes(x =data_inp$bmi, y=get(split_var)))+
     geom_boxplot(outlier.colour="red", outlier.shape=20, outlier.size=2)+
-    labs(x="bmi", y=split_var)+theme_bw()}
+    labs(x="bmi", y=split_var)
+}
 
-#Execute the function
+# Execute the function
 split_boxplot_bmi(data,"region")
 
 
@@ -167,7 +169,7 @@ split_boxplot_bmi(data,"region")
 # ------------------------------------------------------------------------------
 # We observe a difference in the distribution of bmi when we account for each region.
 # For instance, the median in southeast is the highest and also has a wider 
-# distribution of individuals with ranging bmi.On the contrary, both regions in the
+# distribution of individuals with ranging bmi. On the contrary, both regions in the
 # north have a smaller data distribution with the least narrow quartiles. 
 # For instance, northwest has the most narrow quartiles. 
 
