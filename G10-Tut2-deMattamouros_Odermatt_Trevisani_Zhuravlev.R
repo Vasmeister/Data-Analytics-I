@@ -59,8 +59,9 @@ library(ggplot2)
 # ------------------------------------------------------------------------------
 ####  1  ####
 # 7 x 1204
-nrow(data) # observations =1204
-ncol(data) # covariates   =7    (assuming all of the columns are covariates, and there is no dependent variable)
+nrow(data)  # observations = 1204
+ncol(data)  # colums of data= 7. As we mostly collect data to examine the dependency of at least one variable on the remaining 
+            # covariates, we deduce the covariates to be = 6.  
 
 
 ####  2  ####
@@ -133,15 +134,18 @@ ggplot(data, aes(x=age, y=charges, color=smoker)) +
 # ------------------------------------------------------------------------------
 #### 5 ####
 # Create a function
-compact_scatter_plot <-function(data_inp,x.variable,y.variable,color.variable){
-    ggplot(data_inp, aes(x=get(x.variable), y=get(y.variable), color=get(color.variable)))+ 
+
+scatter_plot <- function(any_data, x.variable, y.variable, color.variable){
+  
+    ggplot(any_data, aes(x=get(x.variable), y=get(y.variable), color=get(color.variable)))+ 
     geom_point(na.rm=TRUE)+ ggtitle("Scatter Plot") +
     labs(x=x.variable,y=y.variable,colour=color.variable)+
     geom_smooth(method = "lm", se = FALSE)
+
 }
 
 # Execute the function
-compact_scatter_plot(data,"bmi","charges","sex")
+scatter_plot(data,"bmi","charges","sex")
 
 # We observe that as bmi increases, the variance of charges also increases, therefore
 # the data has heteroskedasticity implied in it. Moreover, we observe in general
@@ -153,14 +157,17 @@ compact_scatter_plot(data,"bmi","charges","sex")
 # ------------------------------------------------------------------------------
 #### 6 ####
 # Create a function
-split_boxplot_bmi<-function(data_inp, split_var){
+
+bmi_bosxplot <- function(data_inp, split_var){
+  
   ggplot(data=data_inp,aes(x =data_inp$bmi, y=get(split_var)))+
     geom_boxplot(outlier.colour="red", outlier.shape=20, outlier.size=2)+
     labs(x="bmi", y=split_var)
+  bmi_boxplot
 }
 
 # Execute the function
-split_boxplot_bmi(data,"region")
+boxplot_bmi(data,"region")
 
 
 # The other variable that is passed as the argument is the region.
