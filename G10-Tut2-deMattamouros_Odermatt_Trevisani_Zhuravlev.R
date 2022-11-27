@@ -136,6 +136,10 @@ ggplot(data, aes(x=age, y=charges, color=smoker)) +
 # Create a function
 
 scatter_plot <- function(any_data, x.variable, y.variable, color.variable){
+            
+      if ( class(any_data)!="data.frame" ) {
+    stop("any_data not of data.frame type")
+  }    
   
     ggplot(any_data, aes(x=get(x.variable), y=get(y.variable), color=get(color.variable)))+ 
     geom_point(na.rm=TRUE)+ ggtitle("Scatter Plot") +
@@ -159,6 +163,10 @@ scatter_plot(data,"bmi","charges","sex")
 # Create a function
 
 bmi_bosxplot <- function(data_inp, split_var){
+            
+      if ( class(data_inp)!="data.frame" ) {
+    stop("any_data not of data.frame type")
+  }
   
   ggplot(data=data_inp,aes(x =data_inp$bmi, y=get(split_var)))+
     geom_boxplot(outlier.colour="red", outlier.shape=20, outlier.size=2)+
