@@ -271,6 +271,7 @@ for (a in c(1:4)) {
   cond_matrix[2,a] <- sum(data$smoker=="yes" & data$region==region_matrix[,a])/sum(data$region==region_matrix[,a])
   
   }
+print(cond_matrix) 
 ```
 Proceed with a for loop, print(cond_matrix) is the matrix has the full answer summed in a table for each region
 ```{r}
