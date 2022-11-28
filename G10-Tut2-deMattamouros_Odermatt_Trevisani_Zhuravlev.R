@@ -319,7 +319,7 @@ We observe that as bmi increases, the variance of charges also increases, theref
 
 Exercise 6
 #```{r}
-bmi_bosxplot <- function(data_inp, split_var){
+bmi_boxplot <- function(data_inp, split_var){
             
      if ( class(data_inp)!="data.frame" ) {
     stop("any_data not of data.frame type")
@@ -327,10 +327,10 @@ bmi_bosxplot <- function(data_inp, split_var){
   
   ggplot(data=data_inp,aes(x =data_inp$bmi, y=get(split_var)))+
     geom_boxplot(outlier.colour="red", outlier.shape=20, outlier.size=2)+
-    labs(x="bmi", y=split_var)
-  bmi_boxplot
+    labs(x="bmi", y=split_var)+theme_bw()
+  
 }
-boxplot_bmi(data,"region")
+bmi_boxplot(data,"region")
 #```
 We observe a difference in the distribution of bmi when we account for each region. For instance, the median in southeast is the highest and also has a wider distribution of individuals with ranging bmi. On the contrary, both regions in the north have a smaller data distribution with the least narrow quartiles. For instance, northwest has the most narrow quartiles. 
 
