@@ -212,8 +212,10 @@ output: html_document
 
 
 Exercise 1
-```{r}
+```{r, results=FALSE}
 load("/Users/nenetrevisani/Desktop/data an/DA1/insurance-all.Rdata")
+```
+```{r}
 nrow(data)
 ncol(data)
 ```
@@ -224,8 +226,10 @@ colums of data= 7. As we mostly collect data to examine the dependency of at lea
 
 
 Exercise 2
-```{r}
+```{r, results=FALSE}
 library(dplyr)
+```
+```{r}
 data %>% count(children)
 ```
 the highest number is 296 (1)
@@ -283,8 +287,10 @@ is the region with the lowest share of smokers: northwest, the share is 0.168965
 
 
 Exercise 4
-```{r}
+```{r, results=FALSE}
 library(ggplot2)
+```
+```{r}
 ggplot(data, aes(x=age, y=charges, color=smoker)) +
   geom_point(na.rm=TRUE) +
   ggtitle("Scatter Plot of Age vs. Charges Given Smoking Status") + ylab("Charges") + xlab("Age") +
@@ -319,7 +325,7 @@ We observe that as bmi increases, the variance of charges also increases, theref
 
 
 Exercise 6
-#```{r}
+```{r}
 bmi_boxplot <- function(data_inp, split_var){
             
      if ( class(data_inp)!="data.frame" ) {
@@ -328,11 +334,11 @@ bmi_boxplot <- function(data_inp, split_var){
   
   ggplot(data=data_inp,aes(x =data_inp$bmi, y=get(split_var)))+
     geom_boxplot(outlier.colour="red", outlier.shape=20, outlier.size=2)+
-    labs(x="bmi", y=split_var)+theme_bw()
-  
+    labs(x="bmi", y=split_var)
+
 }
 bmi_boxplot(data,"region")
-#```
+```
 We observe a difference in the distribution of bmi when we account for each region. For instance, the median in southeast is the highest and also has a wider distribution of individuals with ranging bmi. On the contrary, both regions in the north have a smaller data distribution with the least narrow quartiles. For instance, northwest has the most narrow quartiles. 
 
 
