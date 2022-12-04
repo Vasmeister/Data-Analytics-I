@@ -227,7 +227,6 @@ ggplot() +
 
 
 
-
 ---
 title: "PS2_Markdown"
 author: 
@@ -246,8 +245,8 @@ load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-test.Rdata")
 load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-train.Rdata")
 ```
 ```{r}
-nrow(train)
 nrow(test)
+nrow(train)
 ```
 
 There are 143 observations in the test set, and 214 observations in the train set.
@@ -271,10 +270,10 @@ rownames(grade_summary)=c("Mean","Min","Max")
 grade_summary
 ```
 
-Therefore, we find the following in the training data:the average grade is 11.64, the minimum is 4 and the maximum is 19.00.
+Therefore, we find the following in the training data: the average grade is 11.64, the minimum is 4 and the maximum is 19.00.
 
 ## Exercise 3
-```{r, results=FALSE, include=FALSE}
+```{r, results=FALSE}
 library(ggplot2)
 ```
 ```{r}
@@ -300,13 +299,16 @@ Studytime: hours spent although may vary depending on background of esch individ
 Higher: a motivated person may very likely achieve higher grades as math is a core subject in many advanced higher education levels. 
 Internet: access to it means access to information.
 
-```{r}
+
+```{r, results=FALSE}
 lm.5vars <- lm(data = train, G3 ~ absences + internet +  schoolsup + higher + studytime)
 summary(lm.5vars)
 
 lm.fo.5.interact <- lm(data = train, G3 ~ absences + internet +  schoolsup + higher + studytime + (absences + internet +  schoolsup + higher + studytime )^2)
 summary(lm.fo.5.interact)
+```
 
+```{r}
 MSE.5vars.in.sample <- mean((train$G3 - lm.5vars$fitted.values)^2)
 print(paste("MSE Model With 5 Variables:", round(MSE.5vars.in.sample, 4))) 
 
@@ -320,7 +322,7 @@ Apparently the MSE is lower with more covariates. This is due to the fact that w
 
 Variables chosen: Fedu, failures, famsup, paid, freetime. Bc ...
 
-```{r}
+```{r, results=FALSE}
 lm.10vars <- lm(data = train, G3 ~ absences + internet +  schoolsup + 
                   higher + studytime + Fedu + failures + famsup + 
                   paid + freetime)
@@ -332,7 +334,9 @@ lm.fo.10.interact <- lm(data = train, G3 ~ absences + internet +  schoolsup +
                                                higher + studytime + Fedu + failures + famsup + 
                                                paid + freetime)^2)
 summary(lm.fo.10.interact)
+```
 
+```{r}
 MSE.10vars.in.sample <- mean((train$G3 - lm.10vars$fitted.values)^2)
 print(paste("MSE Model With 10 Variables:", round(MSE.10vars.in.sample, 4))) 
 
@@ -377,71 +381,6 @@ ggplot() +
   annotate("text", x=4, y=11, label= "In orange: MSEs in sample")
 Footer
 #```
-
-### Fit Plot - Train Sample , In-sample fit plot
-
-
-Specify Outcome Variable
-
-#```{r}
-G3_train <- as.matrix(train$G3)
-G3_test <- as.matrix(test$G3)
-#```
-
-#```{r}
-
-Create data frame for plotting predictions from models
-
-model_var <- c(rep("5 variables",length(G3_train)), rep("5 variables and interaction terms",length(G3_train)),
-               rep("10 variables",length(G3_train)),rep("10 variables and interaction terms",length(G3_train)))
-observed_G3 <- c(rep(G3_train, 4))
-predicted_G3 <- c(fitted(lm.fo.5.interact), fitted(lm.fo.5.interact), fitted(lm.10vars),fitted(lm.fo.10.interact))
-
-#``` 
-
-Plot
-
-#```{r}
-ggplot(fit.plot, aes(x=observed_G3, y = predicted_G3, col = model_var)) +
-  geom_point(size = 2) +
-  geom_abline(intercept = 0, slope = 1, color = "black", size = 1) +
-  xlab("Predicted Grades") + 
-  ylab("Observed Grades") + ylim(0,20) + xlim(0,20)
-
-#``` 
-
-Here we observe that model with 10 variables and interaction terms performs best in comparison to other models.
-
-### Fit Plot - Test Sample , Out-of-sample fit plot
-
-Create data frame for plotting predictions from models
-
-#```{r}
-
-test_model_var <- c(rep("5 variables",length(G3_test)), rep("5 variables and interaction terms",length(G3_test)),
-               rep("10 variables",length(G3_test)),rep("10 variables and interaction terms",length(G3_test)))
-test_observed_G3 <- c(rep(G3_test, 4))
-test_predicted_G3 <- c(fitted.1, fitted.2, fitted.3, fitted.4)
-
-test_fit.plot <- data.frame("observed grades" = test_observed_G3, "predicted grades" = test_predicted_G3, "models" = test_model_var)
-
-#``` 
-
-Plot
-
-#```{r}
-
-ggplot(test_fit.plot, aes(x=test_observed_G3, y = test_predicted_G3, col = test_model_var)) +
-  geom_point(size = 1.75) +
-  geom_abline(intercept = 0, slope = 1, color = "black", size = 1) +
-  xlab("Predicted Grades") + 
-  ylab("Observed Grades") + ylim(0,20) + xlim(0,20)
-
-#``` 
-
-On an out-of-sample fit we can clearly see that model with 10 variables and interaction terms doesn't make the best predictions, quite on the contrary. 
-It is rather hard to observe which model performs the best, but from the look of it one could consider either the model with 5 variables or the model with 5 variables and interaction terms. 
-However based on out-of-sample MSE we know that model 10 performs the best with the test data.
 
 
 
