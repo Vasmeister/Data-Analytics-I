@@ -246,8 +246,8 @@ load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-test.Rdata")
 load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-train.Rdata")
 ```
 ```{r}
-nrow(data)
-ncol(data)
+nrow(train)
+nrow(test)
 ```
 
 There are 143 observations in the test set, and 214 observations in the train set.
