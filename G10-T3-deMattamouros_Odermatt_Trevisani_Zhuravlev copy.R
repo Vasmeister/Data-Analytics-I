@@ -293,9 +293,12 @@ add text
 
 ## Exercise 5
 
-Chosen covariates and why:absences: presence durgin classes has been shown to positively impact a student's engagement with the subject studied.schoolsup: extra educational school support indeed may affect the knowledge and engagement of a student with his education. studytime: hours spent although may vary depending on background of esch individual may highly impact the final grade.
-higher: a motivated person may very likely achieve higher grades as math is a core subject in many advanced higher education. levels. internet: access to it means access to information.
-
+Chosen covariates and why.
+Absences: presence durin classes has been shown to positively impact a student's engagement with the subject studied.
+Schoolsup: extra educational school support indeed may affect the knowledge and engagement of a student with his education. 
+Studytime: hours spent although may vary depending on background of esch individual may highly impact the final grade.
+Higher: a motivated person may very likely achieve higher grades as math is a core subject in many advanced higher education levels. 
+Internet: access to it means access to information.
 
 ```{r}
 lm.5vars <- lm(data = train, G3 ~ absences + internet +  schoolsup + higher + studytime)
