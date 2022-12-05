@@ -228,7 +228,7 @@ ggplot() +
 
 
 ---
-title: "PS2_Markdown"
+title: "PS2_Markdown_Trevisani"
 author: 
 - José Maria de Mattamouros Resende Fonseca de Oliveira (22-602-783)
 - Linda Fiorina Odermatt (17-946-310)
@@ -241,8 +241,8 @@ output: pdf_document
 ## Exercise 1
 
 ```{r, results=FALSE}
-load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-test.Rdata")
-load("/Users/nenetrevisani/Desktop/data an/DA2/student-mat-train.Rdata")
+load("/Users/nenetrevisani/Desktop/student-mat-test.Rdata")
+load("/Users/nenetrevisani/Desktop/student-mat-train.Rdata")
 ```
 ```{r}
 nrow(test)
@@ -288,7 +288,18 @@ Notice the data is fairly normally distributed, there are no large outliers for 
 
 ## Exercise 4
 
-add text
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+Causal and predictive modelling have in common that they both recur to statistical learning
+to define a function $\hat f$ so that $Y \approx \hat f(X)$, given any true set (X,Y). The core difference 
+lies in their task and their use for the functional form $\hat f(X)$. Causal models aim at finding causal
+relations between covariates and dependent variable; in this view it is concerned with the exact form 
+of the function considered. It requires an interpretable form of $\hat f(X)$. Predictive modelling is about 
+finding a functional form that best predicts/estimates an unobserved dependent variable. The specific form of 
+the function therefore plays lesser of a big role. The important is that the value predicted is
+reliable/close to the true one.
 
 ## Exercise 5
 
@@ -367,7 +378,7 @@ print(paste("MSE Model 10 Variables With Interaction Variables:", round(MSE.fo.1
 
 Apparently, the functional form with 10 variables fits the best (model 3).
 
-#```{r}
+```{r}
 MSEout <- data.frame(model = c("Model.5.vars", "Model.5.inter", "Model.10.vars", "Model.10.inter"), MSE.out = c(MSE.5vars.out.sample, MSE.fo.5.out.sample , MSE.10vars.out.sample , MSE.fo.10.out.sample))
 MSEin <- data.frame(model = c("Model.5.vars", "Model.5.inter", "Model.10.vars", "Model.10.inter"), MSE.in = c(MSE.5vars.in.sample, MSE.fo.5.in.sample, MSE.10vars.in.sample, MSE.fo.10.in.sample))
 
@@ -377,54 +388,9 @@ ggplot() +
   geom_col(data = MSEout, aes(model, MSE.out), fill="blue", alpha = 0.2) +
   geom_col(data = MSEin, aes(model, MSE.in), fill="orange2", alpha = 0.6) +
   ylab("MSE")+ 
-  annotate("text", x=4, y=12, label= "In blue: MSEs out sample") +
-  annotate("text", x=4, y=11, label= "In orange: MSEs in sample")
-Footer
-#```
+  annotate("text", x=3, y=12, label= "In blue: MSEs out sample") +
+  annotate("text", x=3, y=11, label= "In orange: MSEs in sample")
+```
 
 
-##### alternative 5 and 6
-
-#task 5
-model.variables.5 = c("sex", "address", "studytime", "paid" , "higher") #variables to be studied
-
-
-train.5= subset(train, select = c("G3", model.variables.5)) # restricting data frame to study variables for simplicity of the code
-
-model5.1 = lm(G3 ~ . , data = train.5)
-model5.2 = lm(G3 ~ . + .^2, data = train.5)
-
-  #to study  the in-sample fit of the two models we will use the MSE
-MSE.model5.1 <- mean((train.5$G3 - model5.1$fitted.values)^2)
-MSE.model5.2 <- mean((train.5$G3 - model5.2$fitted.values)^2)
-
-    # as expected the MSE of the second model is lower (ELABORATE FURTHER)
-
-
-
-#task 6
-
-model.variables.6 = c(model.variables.5, "age", "traveltime", "internet", "freetime", "goout")
-
-train.6 = subset(train, select = c("G3", model.variables.6)) # restricting data frame to study variables for simplicity of the code
-
-
-model6.1 = lm(G3 ~ . , data = train.6)
-model6.2 = lm(G3 ~ . + .^2, data = train.6)
-
-
-fit6.1=predict(model6.1, newdata = test )
-fit6.2=predict(model6.2, newdata = test )
-
-
-  #in sample fiitng
-
-
-ggplot(train.6, aes(x=model6.1$fitted.values, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
-ggplot(train.6, aes(x=model6.2$fitted.values, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
-
-  #out of sample fitting
-
-ggplot(test, aes(x=fit6.1, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
-ggplot(test, aes(x=fit6.2, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
 
