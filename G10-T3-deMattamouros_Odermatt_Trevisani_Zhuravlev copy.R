@@ -383,4 +383,48 @@ Footer
 #```
 
 
+##### alternative 5 and 6
+
+#task 5
+model.variables.5 = c("sex", "address", "studytime", "paid" , "higher") #variables to be studied
+
+
+train.5= subset(train, select = c("G3", model.variables.5)) # restricting data frame to study variables for simplicity of the code
+
+model5.1 = lm(G3 ~ . , data = train.5)
+model5.2 = lm(G3 ~ . + .^2, data = train.5)
+
+  #to study  the in-sample fit of the two models we will use the MSE
+MSE.model5.1 <- mean((train.5$G3 - model5.1$fitted.values)^2)
+MSE.model5.2 <- mean((train.5$G3 - model5.2$fitted.values)^2)
+
+    # as expected the MSE of the second model is lower (ELABORATE FURTHER)
+
+
+
+#task 6
+
+model.variables.6 = c(model.variables.5, "age", "traveltime", "internet", "freetime", "goout")
+
+train.6 = subset(train, select = c("G3", model.variables.6)) # restricting data frame to study variables for simplicity of the code
+
+
+model6.1 = lm(G3 ~ . , data = train.6)
+model6.2 = lm(G3 ~ . + .^2, data = train.6)
+
+
+fit6.1=predict(model6.1, newdata = test )
+fit6.2=predict(model6.2, newdata = test )
+
+
+  #in sample fiitng
+
+
+ggplot(train.6, aes(x=model6.1$fitted.values, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
+ggplot(train.6, aes(x=model6.2$fitted.values, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
+
+  #out of sample fitting
+
+ggplot(test, aes(x=fit6.1, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
+ggplot(test, aes(x=fit6.2, y=G3)) + geom_point() + geom_abline(intercept = 0, slope = 1)
 
