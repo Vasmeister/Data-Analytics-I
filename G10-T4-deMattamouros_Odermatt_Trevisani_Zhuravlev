@@ -1,21 +1,21 @@
 # ----------------------------------------------------------------------------
 #                                                                                                                      
 #
-#                           88
-#                           88
-#                           88             
-#                           88                                   
-#                           88                                    
-#                           8b,dPPPPYba, ,dPPPYba,   ,adYPPPYba88
-#                           88P'    `"8a a8P   `"8a  a8P       88
-#                           88        88 8PP         8PP       88
-#                           88        88 `"PPYYba"   8O        88
-#"                          88        88         8P   8b,     ,88
-#                           88        88 "8a,   "a8   `"Ybbdd888"
-#                           88        88 `"YbbdPP"             88
-#                                                              88
-#                                                     "8b      88
-#                                                     `"Ybbdd888"  
+#                  88
+#                  88
+#                  88             
+#                  88                                   
+#                  88                                    
+#                  8b,dPPPPYba, ,dPPPYba,   ,adYPPPYba88
+#                  88P'    `"8a a8P   `"8a  a8P       88
+#                  88        88 8PP         8PP       88
+#                  88        88 `"PPYYba"   8O        88
+#                  88        88         8P   8b,     ,88
+#                  88        88 "8a,   "a8   `"Ybbdd888"
+#                  88        88 `"YbbdPP"             88
+#                                                     88
+#                                            "8b      88
+#                                            `"Ybbdd888"  
 #
 #     Jose de Mattamouros, Linda Odermatt, Elena Trevisani, Vasily Zhuravlev
 #     Master in Economics
@@ -25,17 +25,17 @@
 # ------------------------------------------------------------------------------
 # 
 # Filename:  Data Analytics 1: Predictive Econometrics - PC 4
-# Topic:     Topic: 
-# Date of submission:
+# Topic:     Forests
+# Date of submission: 11.12.2022
 #
 # ------------------------------------------------------------------------------
 #Step 1: Set the working directory:
 #Find which directory you are currently working in
 ddpath 
 getwd()
-# "~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 4"
+# "~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 5 - Regularised Regression"
 #Set the directory you would like to work in
-setwd("~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 4")
+setwd("~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 5 - Regularised Regression")
 #
 #Load data
 read_csv("R course/Data/browser_2006.csv")
