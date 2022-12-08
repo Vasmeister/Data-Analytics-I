@@ -44,17 +44,19 @@ read_csv("R course/Data/browser_new.csv")
 # ------------------------------------------------------------------------------
 #Step 2: Install and load the relevant packages for the problem
 
-install.packages("grf")
-install.packages("DiagrammeR")
-install.packages("glmnet")
+#remove # to install the packages
+#install.packages("grf")
+#install.packages("DiagrammeR")
+#install.packages("glmnet")
 
+#load the packages
 library("grf")
 library("DiagrammeR")
 library("glmnet")
 
 #-------------------------------------------------------------------------------
 
-#exercise 1
+#Exercise 1 - Calculate the average online spending in 2006
 mean(browser_2006$spend)
 
 #same code with more text for better comprehension
@@ -64,7 +66,7 @@ print(paste("The average online spending of a household in 2006 was",
 
 #-------------------------------------------------------------------------------
 
-#exercise 2
+#Exercise 2 - Find the most popular webpage of household with id 1297
 
 #something is odd with this code, check with Jose
 names(browser_2006[browser_2006$id == 1297,-1])[max(browser_2006[browser_2006$id == 1297,-1])]
@@ -89,11 +91,21 @@ apply(browser_2006[browser_2006$id == 1297,-(1:2)], 1, function(x) max(names(whi
 
 #------------------------------------------------------------------------------
 
-#exercise 3
-set.seed(123) #for future easier comparision
+#Exercise 3 - Find two webpages which are the best linear predictors for online
+#spending
 
-lasso_model = glmnet(as.matrix(browser_2006[,-c(1,2)]), browser_2006$spend, family = "gaussian", alpha = 1) #set the model
+set.seed(123) #for future easier comparision --> Comment: no need bc we don't do CV
 
-vector_coef=c(coef(lasso_model, s = lasso_model$lambda[2])[,1]) #lambda such that number of non zero coef is 2, wrap into a vector for simplicity
+lasso_model = glmnet(as.matrix(browser_2006[,-c(1,2)]), browser_2006$spend, 
+family = "gaussian", alpha = 1, dfmax=3) #set the model
+
+vector_coef=c(coef(lasso_model, s = lasso_model$lambda[2])[,1]) 
+#lambda such that number of non zero coef is 2, wrap into a vector for simplicity
 
 vector_coef[vector_coef!=0] #all non zero coef plus intercept
+
+#print the names of top 2 websites that are best linear predictors for online spending
+
+top_2=t(vector_coef[vector_coef!=0]) 
+names(top_2[,-1])
+
