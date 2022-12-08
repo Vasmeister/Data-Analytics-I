@@ -1,0 +1,75 @@
+# ----------------------------------------------------------------------------
+#                                                                                                                      
+#
+#                           88
+#                           88
+#                           88             
+#                           88                                   
+#                           88                                    
+#                           8b,dPPPPYba, ,dPPPYba,   ,adYPPPYba88
+#                           88P'    `"8a a8P   `"8a  a8P       88
+#                           88        88 8PP         8PP       88
+#                           88        88 `"PPYYba"   8O        88
+#"                          88        88         8P   8b,     ,88
+#                           88        88 "8a,   "a8   `"Ybbdd888"
+#                           88        88 `"YbbdPP"             88
+#                                                              88
+#                                                     "8b      88
+#                                                     `"Ybbdd888"  
+#
+#     Jose de Mattamouros, Linda Odermatt, Elena Trevisani, Vasily Zhuravlev
+#     Master in Economics
+#     University of St. Gallen
+#     9000 St. Gallen
+#
+# ------------------------------------------------------------------------------
+# 
+# Filename:  Data Analytics 1: Predictive Econometrics - PC 4
+# Topic:     Topic: 
+# Date of submission:
+#
+# ------------------------------------------------------------------------------
+#Step 1: Set the working directory:
+#Find which directory you are currently working in
+ddpath 
+getwd()
+# "~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 4"
+#Set the directory you would like to work in
+setwd("~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 4")
+#
+#Load data
+read_csv("R course/Data/browser_2006.csv")
+read_csv("R course/Data/browser_new.csv")
+#
+# ------------------------------------------------------------------------------
+#Step 2: Install and load the relevant packages for the problem
+
+install.packages("grf")
+install.packages("DiagrammeR")
+install.packages("glmnet")
+
+library("grf")
+library("DiagrammeR")
+library("glmnet")
+
+#-------------------------------------------------------------------------------
+
+#exercise 1
+mean(browser_2006$spend)
+
+#-------------------------------------------------------------------------------
+
+#exercise 2
+
+names(browser_2006[browser_2006$id == 1297,-1])[max(browser_2006[browser_2006$id == 1297,-1])]
+
+#------------------------------------------------------------------------------
+
+#exercise 3
+set.seed(123) #for future easier comparision
+
+lasso_model = glmnet(as.matrix(browser_2006[,-c(1,2)]), browser_2006$spend, family = "gaussian", alpha = 1) #set the model
+
+vector_coef=c(coef(lasso_model, s = lasso_model$lambda[2])[,1]) #lambda such that number of non zero coef is 2, wrap into a vector for simplicity
+
+vector_coef[vector_coef!=0] #all non zero coef plus intercept
