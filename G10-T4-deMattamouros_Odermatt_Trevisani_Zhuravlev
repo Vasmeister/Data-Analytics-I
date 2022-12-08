@@ -57,11 +57,35 @@ library("glmnet")
 #exercise 1
 mean(browser_2006$spend)
 
+#same code with more text for better comprehension
+print(paste("The average online spending of a household in 2006 was", 
+            round(mean(browser_2006$spend),digits=2), "USD"))
+
+
 #-------------------------------------------------------------------------------
 
 #exercise 2
 
+#something is odd with this code, check with Jose
 names(browser_2006[browser_2006$id == 1297,-1])[max(browser_2006[browser_2006$id == 1297,-1])]
+
+#alternative solution
+id_1297=browser_2006[browser_2006$id == 1297,3:ncol(browser_2006)] #extract row
+max(id_1297) # calculate the maximum value in % which represents the
+#share of the most visited webpage by the household
+sum(id_1297) #should add up to 100
+
+t_id_1297=t(id_1297) #transpose the data frame, so that it can be sorted
+
+id_1297_top_website = head(t_id_1297[order(-t_id_1297),],1) 
+# the most visited website
+
+print(paste("The most visited webpage by a household with ID 1297 is",
+            names(id_1297_top_website)))
+
+#shortcut function which yields the same result in 1 line
+
+apply(browser_2006[browser_2006$id == 1297,-(1:2)], 1, function(x) max(names(which(x == max(id_1297)))))
 
 #------------------------------------------------------------------------------
 
