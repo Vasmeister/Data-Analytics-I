@@ -6,4 +6,4 @@ Here we write our solutions for the class' problem sets.
 Feel free to leave any to-do comments below.
 
 <b>To Do:</b>
-* Meet to discuss the solutions for problem set 2
+* Meet to discuss the solutions for problem set 3
