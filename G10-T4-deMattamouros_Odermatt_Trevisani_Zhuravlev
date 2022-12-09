@@ -71,7 +71,8 @@ print(paste("The average online spending of a household in 2006 was",
 #something is odd with this code, check with Jose
 names(browser_2006[browser_2006$id == 1297,-1])[max(browser_2006[browser_2006$id == 1297,-1])]
 
-#alternative solution
+##### FIRST ALTERNATIVE
+
 id_1297=browser_2006[browser_2006$id == 1297,3:ncol(browser_2006)] #extract row
 max(id_1297) # calculate the maximum value in % which represents the
 #share of the most visited webpage by the household
@@ -88,6 +89,14 @@ print(paste("The most visited webpage by a household with ID 1297 is",
 #shortcut function which yields the same result in 1 line
 
 apply(browser_2006[browser_2006$id == 1297,-(1:2)], 1, function(x) max(names(which(x == max(id_1297)))))
+
+##### SECOND ALTERNATIVE
+
+no_id_spend_browser_2006 <- select(browser_2006, -id, -spend)
+
+max <- colnames(no_id_spend_browser_2006)[max.col(no_id_spend_browser_2006,ties.method="first")]
+
+max[1]
 
 #------------------------------------------------------------------------------
 
