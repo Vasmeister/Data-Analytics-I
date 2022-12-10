@@ -62,7 +62,8 @@ mean(browser_2006$spend)
 #same code with more text for better comprehension
 print(paste("The average online spending of a household in 2006 was", 
             round(mean(browser_2006$spend),digits=2), "USD"))
-
+            
+# The average online spending in 2006 is 1959,921 US dollars.
 
 #-------------------------------------------------------------------------------
 
@@ -98,6 +99,8 @@ max <- colnames(no_id_spend_browser_2006)[max.col(no_id_spend_browser_2006,ties.
 
 max[1]
 
+# The household with ID=1297 is most of the time on the "weather.com" webpage.
+
 #------------------------------------------------------------------------------
 
 #Exercise 3 - Find two webpages which are the best linear predictors for online
@@ -117,6 +120,9 @@ vector_coef[vector_coef!=0] #all non zero coef plus intercept
 
 top_2=t(vector_coef[vector_coef!=0]) 
 names(top_2[,-1])
+
+# The two webpages that are together the best linear predictors for online
+# spending in 2006 are "officedepot.com" and "staples.com".
 
 #------------------------------------------------------------------------------
 
