@@ -1,0 +1,152 @@
+---
+title: "PS3_Markdown_file"
+author: 
+- José Maria de Mattamouros Resende Fonseca de Oliveira (22-602-783)
+- Linda Fiorina Odermatt (17-946-310)
+- Elena Trevisani (22-620-603) 
+- Vasily Zhuravlev (18-502-401) 
+date: "2022-12-09"
+output: pdf_document
+---
+
+```{r, results=FALSE}
+load("/Users/nenetrevisani/Downloads/browser_2006.RData")
+load("/Users/nenetrevisani/Downloads/browser_new.RData")
+```
+
+## Exercise 1
+
+```{r}
+print(paste("The average online spending of a household in 2006 was", 
+            round(mean(browser_2006$spend),digits=2), "USD"))
+```            
+
+The average online spending in 2006 is 1959,921 US dollars.
+
+## Exercise 2
+
+### First alternative
+
+```{r}
+id_1297=browser_2006[browser_2006$id == 1297,3:ncol(browser_2006)] #extract row
+max(id_1297) # calculate the maximum value in % which represents the
+#share of the most visited webpage by the household
+sum(id_1297) #should add up to 100
+
+t_id_1297=t(id_1297) #transpose the data frame, so that it can be sorted
+
+id_1297_top_website = head(t_id_1297[order(-t_id_1297),],1) 
+# the most visited website
+
+print(paste("The most visited webpage by a household with ID 1297 is",
+            names(id_1297_top_website)))
+
+#shortcut function which yields the same result in 1 line
+
+apply(browser_2006[browser_2006$id == 1297,-(1:2)], 1, function(x) max(names(which(x == max(id_1297)))))
+``` 
+
+### Second alternative
+
+```{r, warning=FALSE,message=FALSE,results=FALSE}
+library(dplyr)
+```
+
+```{r}
+no_id_spend_browser_2006 <- select(browser_2006, -id, -spend)
+
+max <- colnames(no_id_spend_browser_2006)[max.col(no_id_spend_browser_2006,ties.method="first")]
+
+max[1]
+```
+
+The household with ID=1297 is most of the time on the "weather.com" webpage.
+
+## Exercise 3
+
+```{r, warning=FALSE,message=FALSE,results=FALSE}
+library("glmnet")
+```
+
+```{r}
+set.seed(09122022) #for future easier comparision 
+
+lasso_model = cv.glmnet(as.matrix(browser_2006[,-c(1,2)]), browser_2006$spend, 
+family = "gaussian", nfolds=5, alpha = 1, dfmax=3) #set the model
+
+vector_coef=c(coef(lasso_model, s = lasso_model$lambda[2])[,1]) 
+#lambda such that number of non zero coef is 2, wrap into a vector for simplicity
+
+vector_coef[vector_coef!=0] #all non zero coef plus intercept
+
+#print the names of top 2 websites that are best linear predictors for online spending
+
+top_2=t(vector_coef[vector_coef!=0]) 
+names(top_2[,-1])
+```
+
+The two webpages that are together the best linear predictors for online
+spending in 2006 are "officedepot.com" and "staples.com".
+
+## Exercise 4
+
+```{r, warning=FALSE,message=FALSE,results=FALSE}
+library(ggplot2)
+```
+
+```{r, warning=FALSE}
+#Post-lasso model estimated with OLS method
+post.lasso_model = lm(spend ~ (officedepot.com + staples.com), data = browser_2006)
+
+#OLS model with all variables
+all.variables_ols = lm(spend ~ . , data = browser_2006[,-1]) 
+
+#Predicted Values for new data
+prediction.post.lasso_model = predict(post.lasso_model, newdata = browser_new)
+prediction.all.varibales_OLS = predict(all.variables_ols, newdata = browser_new)
+
+#Correlation between OLS and Post-Lasso predictions
+cor(prediction.all.varibales_OLS, prediction.post.lasso_model) 
+
+#Plot of fitted values 
+predicted.values =as.data.frame(cbind(prediction.all.varibales_OLS,prediction.post.lasso_model),
+colnames=c("all.variables_ols", "post.lasso_model")) 
+
+ggplot(data = predicted.values, 
+aes(x = prediction.all.varibales_OLS, y= prediction.post.lasso_model)) +
+geom_point() + 
+geom_abline(intercept = 0, slope = 1) +
+ggtitle("Scatter Plot with line of best fit with predicted values for test data")+
+ylab("Post-Lasso predicted spending") + 
+xlab("OLS predicted spending")
+      
+#Zoomed in plot without some outliers for better visuals
+ggplot(data = predicted.values, 
+aes(x = prediction.all.varibales_OLS, y= prediction.post.lasso_model)) +
+geom_point() + 
+geom_abline(intercept = 0, slope = 1) +
+xlim(-10000,15000) + 
+ylim(1500,10000) +
+ggtitle("Zoomed Scatter Plot with line of best fit")+
+ylab("Post-Lasso predicted spending") + 
+xlab("OLS predicted spending")
+```
+
+conclusion missing - observing the graph it seems lasso provides more consistent
+and lower variance predictions - need to justify with/ wether lasso is better
+
+From the surface, it seems that a post-Lasso model should create more reasonable
+predictions based on the fact that it generates only positive values. On the other
+hand if OLS based prediction is used then we can see that it can become problematic
+as it would be possible to generate negative predicted values. In essence, it
+doesn't make sense since spending extra time on a website won't result in customers
+receiving the money for online spending.
+
+Moreover, judging from the in-sample R-squared values, post-Lasso Model doesn't
+do a great job in explaining the variability in data and therefore it impacts
+it may impact its ability to predict on out-of-sample data. In our view,
+it makes sense to include more control variables in order to improve the
+predictability of post-Lasso model.
+
+
+
