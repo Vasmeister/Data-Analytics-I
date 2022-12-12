@@ -25,39 +25,10 @@ The average online spending in 2006 is 1959,921 US dollars.
 
 ## Exercise 2
 
-### First alternative
-
 ```{r}
-id_1297=browser_2006[browser_2006$id == 1297,3:ncol(browser_2006)] #extract row
-max(id_1297) # calculate the maximum value in % which represents the
-#share of the most visited webpage by the household
-sum(id_1297) #should add up to 100
-
-t_id_1297=t(id_1297) #transpose the data frame, so that it can be sorted
-
-id_1297_top_website = head(t_id_1297[order(-t_id_1297),],1) 
-# the most visited website
-
-print(paste("The most visited webpage by a household with ID 1297 is",
-            names(id_1297_top_website)))
-
-#shortcut function which yields the same result in 1 line
 
 apply(browser_2006[browser_2006$id == 1297,-(1:2)], 1, function(x) max(names(which(x == max(id_1297)))))
-``` 
 
-### Second alternative
-
-```{r, warning=FALSE,message=FALSE,results=FALSE}
-library(dplyr)
-```
-
-```{r}
-no_id_spend_browser_2006 <- select(browser_2006, -id, -spend)
-
-max <- colnames(no_id_spend_browser_2006)[max.col(no_id_spend_browser_2006,ties.method="first")]
-
-max[1]
 ```
 
 The household with ID=1297 is most of the time on the "weather.com" webpage.
