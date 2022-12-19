@@ -224,3 +224,60 @@ round(mean(dummy_sd)*100,2) #population mean
 # We observe that the recorded subsample means are very close to the average
 # soft drug consumption in the full sample. This corresponds to the Central 
 # Limit Theory Hypothesis.
+
+# Alternative with ggplot for aesthetics
+
+# Convert matrix to data frame
+df <- as.data.frame(multiple_drugs_samples)
+
+#Plot
+ggplot(data=df, aes(x=V1)) + 
+  geom_histogram(binwidth= 1 , color = "darkblue", fill = "lightblue") +
+  ggtitle("Histogram for Soft Drug Use (obs = 500, draws = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  geom_vline(xintercept=mean(df$V1), col="red") +
+  geom_vline(xintercept=median(df$V1), col="purple") + theme_bw()
+
+#-------------------------------------------------------------------------------
+
+# Exercise 6 - Comparing random samples
+
+# Part 1. Creating a function to generate random samples and print mean of 
+# each subsample
+
+set.seed(2122020) # for replication of results
+
+subsample_mean=function(data, variable, sample.size, ndraws)
+{
+
+  subsample_mean= matrix(NA, nrow=ndraws, ncol=1)
+
+# Transform character variables into boolean 
+if (class(variable) == "character"){
+  boolean = as.logical(variable) 
+  dummy = as.numeric(boolean)
+  
+  # Calculate the mean of each subsample with for loop
+  for (i in 1:ndraws) {
+    subsample_mean[i,] = mean(sample(dummy, sample.size, replace=TRUE))*100
+  }
+}
+else if (class(variable) == "logical"){
+  dummy = as.numeric(variable)
+  for (i in 1:ndraws) {
+    subsample_mean[i,] = mean(sample(dummy, sample.size, replace=TRUE))*100
+  }
+}
+else{for (i in 1:ndraws) {
+  subsample_mean[i,] = mean(sample(variable, sample.size, replace=TRUE))*100
+  }}
+  
+  return(subsample_mean)
+}
+
+#Testing the function
+
+mean(subsample_mean(drugs, drugs$Hard_Drug, 1500, 100))
+
+mean(subsample_mean(drugs, drugs$Soft_Drug, 500, 1000))
+
