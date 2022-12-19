@@ -242,8 +242,8 @@ ggplot(data=df, aes(x=V1)) +
 
 # Exercise 6 - Comparing random samples
 
-# Part 1. Creating a function to generate random samples and print mean of 
-# each subsample
+# Part 1. Creating a function to generate random samples and print mean of each
+# subsample
 
 set.seed(2122020) # for replication of results
 
@@ -286,13 +286,11 @@ mean(subsample_mean(drugs, drugs$Soft_Drug, 500, 1000))
 N_runs = c(100, 500, 2500)
 sample_sizes=  c(100, 500, 2500)
 
-
-
 mx_samples = matrix(data=NA, nrow=length(sample_sizes), ncol=length(N_runs))
 rownames(mx_samples) = sample_sizes
 colnames(mx_samples) = N_runs
 
-
+set.seed(2122020) # for replication of results
 for (j in 1:length(N_runs)){
   for (i in 1:length(sample_sizes)){
     mx_samples[i,j] <- round(mean(subsample_mean(drugs, drugs$Soft_Drug, 
@@ -300,6 +298,80 @@ for (j in 1:length(N_runs)){
   }
 }
 
-#Print aggregated results
+#Print results
 print(mx_samples)
 
+# Part 3. Demonstrating CLT with graphs
+
+# Create matrix (ndraws=500, for 3 different subsample sizes )
+
+mx_samples_500ndraws <- matrix(data=NA, nrow=500, 
+                               ncol=length(sample_sizes))
+colnames(mx_samples_500ndraws) <-sample_sizes
+
+for (i in 1:length(sample_sizes)){
+    mx_samples_500ndraws[,i] <-subsample_mean(drugs, drugs$Soft_Drug, 
+                                              sample_sizes[i], 500)
+  }
+rep(colnames(mx_samples_500ndraws))
+length(c(mx_samples_500ndraws))
+
+# Convert matrix to data frame for plotting
+
+model_var <- c(rep("sample size = 100",nrow(mx_samples_500ndraws)), 
+               rep("sample size = 500",nrow(mx_samples_500ndraws)),
+               rep("sample size = 2500",nrow(mx_samples_500ndraws)))
+
+hist.plot <- data.frame("Share of Soft Drug Users (%)" = 
+                          c(mx_samples_500ndraws), 
+                        "models" = model_var)
+
+# Plot Histogram 
+ggplot(data=hist.plot, aes(x=c(mx_samples_500ndraws), col=model_var, 
+                           fill=model_var)) + 
+  ggtitle("Histogram for Soft Drug Use (Draws = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  ylab("Density")+
+  geom_density(alpha=0.1) + 
+  theme_bw()
+
+# Create matrix (ndraws=variables, for subsample size=500 )
+
+mx_samples_500sample <- matrix(data=NA, nrow=sum(N_runs), ncol=2)
+
+#store N_runs values for each row
+mx_samples_500sample[(1:100),2] <- "100"
+mx_samples_500sample[(101:600),2] <- "500"
+mx_samples_500sample[(601:3100),2] <- "2500"
+
+x1 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 100)
+x2 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 500)
+x3 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 2500)
+
+#convert into 1 column matrix with sum(N_runs) rows
+
+mx_samples_500sample[,1] <- as.numeric(cbind(c(x1,x2,x3)))
+mx_samples_500sample[,2]
+# Convert to data frame for plotting
+df_ndraws_500samples <- as.data.frame(x=mx_samples_500sample)
+subsample_m <- as.numeric(df_ndraws_500samples$V1)
+subsample_size <- df_ndraws_500samples$V2
+
+# Plot Histogram 
+ggplot(data=df_ndraws_500samples, aes(x=subsample_m, 
+                                      col=subsample_size ,
+                                      fill=subsample_size)) + 
+  ggtitle("Histogram for Soft Drug Use (Subsample Size = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  ylab("Density")+
+  geom_density(alpha=0.05) + 
+  theme_bw()
+
+# We observe that as we increase the number of draws for a fixed sample, 
+# the distribution of subsample averages remains mostly consistent (i.e., 
+# no evident skewness). Since the draws are random, we don't observe bias in 
+# the mean (i.e., it's remains consistent for all number of draws). 
+# Asymptotically, as the number of draws tends to infinity, the mean distribution 
+# remains consistent if the estimator is unbiased. This demonstrates that for
+# even small number of draws with random subsamples, one should be able to 
+# obtain the unbiased estimator.
