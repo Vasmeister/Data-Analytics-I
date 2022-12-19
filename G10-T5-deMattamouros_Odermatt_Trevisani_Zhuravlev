@@ -185,3 +185,42 @@ chisq.test(x=drugs$Earning, y=drugs$Soft_Drug)
 # We are very close to rejecting the independence hypothesis, but to be precise
 # we cannot reject the independence hypothesis as the p-value is lower than
 # the 5% threshold.
+
+#-------------------------------------------------------------------------------
+
+# Exercise 5 - Random sample with multiple draws
+
+obs_size=500
+
+multiple_drugs_samples <- matrix(NA, nrow=obs_size, ncol=1)
+
+sample_numb=500
+
+#First we convert the string variables to numeric (dummy)
+boolean_sd = as.logical(drugs$Soft_Drug) 
+dummy_sd = as.numeric(boolean)
+
+set.seed(2122020) # for results replication
+
+#For loop to generate  a random sample with 500 observations, 500 times
+for (i in 1:sample_numb) {
+
+  multiple_drugs_samples[i,] = mean(sample(dummy_sd, 
+                                           size=obs_size, replace=TRUE))*100
+  }
+
+head(multiple_drugs_samples, 5) # Test
+
+
+hist(multiple_drugs_samples, probability = FALSE, 
+     main = "Histogram for Soft Drug Use (obs = 500, draws = 500)",
+     xlab="Subsample mean of Soft Drug Use (%)")
+abline(v=mean(multiple_drugs_samples), col="blue")
+abline(v=median(multiple_drugs_samples), col="lightgreen")
+
+round(mean(multiple_drugs_samples),2) #subsample mean from 500 draws
+round(mean(dummy_sd)*100,2) #population mean
+
+# We observe that the recorded subsample means are very close to the average
+# soft drug consumption in the full sample. This corresponds to the Central 
+# Limit Theory Hypothesis.
