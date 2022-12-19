@@ -281,3 +281,25 @@ mean(subsample_mean(drugs, drugs$Hard_Drug, 1500, 100))
 
 mean(subsample_mean(drugs, drugs$Soft_Drug, 500, 1000))
 
+# Part 2. Run the function for different sample sizes and number of draws
+
+N_runs = c(100, 500, 2500)
+sample_sizes=  c(100, 500, 2500)
+
+
+
+mx_samples = matrix(data=NA, nrow=length(sample_sizes), ncol=length(N_runs))
+rownames(mx_samples) = sample_sizes
+colnames(mx_samples) = N_runs
+
+
+for (j in 1:length(N_runs)){
+  for (i in 1:length(sample_sizes)){
+    mx_samples[i,j] <- round(mean(subsample_mean(drugs, drugs$Soft_Drug, 
+                          sample_sizes[i], N_runs[j])),2)
+  }
+}
+
+#Print aggregated results
+print(mx_samples)
+
