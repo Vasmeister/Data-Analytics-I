@@ -97,8 +97,8 @@ print(paste(
 
 #Exercise 3 - Share of soft drug users by age group, focus on young adults
 # we verify that only 3 age categories are present and store them in age_group
-age_group=matrix(levels(factor(drugs$Age, order=TRUE)))
 
+age_group=matrix(levels(factor(drugs$Age, order=TRUE)))
 
 #Create an empty matrix
 age_matrix = matrix(NA, nrow=length(age_group), 
@@ -134,3 +134,54 @@ nrow(drugs[drugs$Soft_Drug == TRUE, ])
 # as age increases. At least as young adults get over 17 years, they
 # don't declare if they consume soft drugs. Could it be that young adults aged
 # 18+ hide their soft drug consumption?
+
+#-------------------------------------------------------------------------------
+
+# Exercise 4 - Chi squared
+
+## Part 1 - Earnings and Soft Drug Consumption Table
+
+# Transform na into 0s
+drugs$Earning[is.na(drugs$Earning)] <- 0
+
+income_group=matrix(levels(factor(drugs$Earning, order = TRUE)))
+#the data is not ordered...
+
+#Therefore we need to order manually
+income_group_ordered=matrix(c("0","<1k USD","1-5k USD", 
+                              "5-10k USD", ">10k USD"))
+
+#Create an empty matrix
+income_matrix = matrix(NA, nrow=length(income_group), 
+                    ncol=2)
+rownames(income_matrix) <- c("0","<1k USD","1-5k USD", "5-10k USD", ">10k USD")
+colnames(income_matrix) <- c("TRUE","FALSE")
+#Quick Test
+nrow(drugs[drugs$Earning == income_group_ordered[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Earning == income_group_ordered[1,] ,])
+
+#For loop to store all the values
+for (i in c(1:length(income_group))){
+  
+  # Calculate the share
+  soft_drug_cons <- drugs[drugs$Earning == income_group_ordered[i,] 
+                          & drugs$Soft_Drug == TRUE, ]
+  
+  sd_share <- round((nrow(soft_drug_cons)/
+                       nrow(drugs[drugs$Earning == income_group_ordered[i,]
+                                  , ]))*100, 2)
+  
+  # store values in a matrix
+  income_matrix[i,1] <- sd_share
+  income_matrix[i,2] <- 100-sd_share
+}
+
+print(income_matrix)
+
+## Part 2 - Calculate Chi-Squared
+
+chisq.test(x=drugs$Earning, y=drugs$Soft_Drug)
+
+# We are very close to rejecting the independence hypothesis, but to be precise
+# we cannot reject the independence hypothesis as the p-value is lower than
+# the 5% threshold.
