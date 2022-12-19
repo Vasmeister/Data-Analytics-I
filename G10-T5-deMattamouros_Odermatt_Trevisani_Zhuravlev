@@ -1,0 +1,66 @@
+# ----------------------------------------------------------------------------
+#                                                                                                                      
+#
+#                  88
+#                  88
+#                  88             
+#                  88                                   
+#                  88                                    
+#                  8b,dPPPPYba, ,dPPPYba,   ,adYPPPYba88
+#                  88P'    `"8a a8P   `"8a  a8P       88
+#                  88        88 8PP         8PP       88
+#                  88        88 `"PPYYba"   8O        88
+#                  88        88         8P   8b,     ,88
+#                  88        88 "8a,   "a8   `"Ybbdd888"
+#                  88        88 `"YbbdPP"             88
+#                                                     88
+#                                            "8b      88
+#                                            `"Ybbdd888"  
+#
+#     Jose de Mattamouros, Linda Odermatt, Elena Trevisani, Vasily Zhuravlev
+#     Master in Economics
+#     University of St. Gallen
+#     9000 St. Gallen
+#
+# ------------------------------------------------------------------------------
+# 
+# Filename:  Data Analytics 1: Predictive Econometrics - PC 5
+# Topic:     Classification
+# Date of submission: 21.12.2022
+#
+# ------------------------------------------------------------------------------
+#Step 1: Set the working directory:
+#Find which directory you are currently working in
+ddpath 
+getwd()
+# "~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 6 - Regularised Regression"
+#Set the directory you would like to work in
+setwd("~/Desktop/HSG/MEcon Herbst Semester/2nd half of the semester/Data Analytics I - Predictive Econometrics/Lecture 6 - Regression Trees and Forests")
+
+
+#Load data
+load("drugs.Rdata")
+
+# ------------------------------------------------------------------------------
+#Step 2: Install and load the relevant packages for the problem
+
+#remove # to install the packages
+#install.packages("rpart")
+#install.packages("rpart.plot")
+
+#load the packages
+library("ggplot2")
+library("rpart")
+library("rpart.plot")
+
+#-------------------------------------------------------------------------------
+
+#Exercise 1 - Calculate the share of males who consume soft drugs 
+
+soft_drug_male_cons <- drugs[drugs$Gender == "male" & drugs$Soft_Drug == TRUE, ]
+
+sd_male_share <- round(nrow(soft_drug_male_cons)/
+                         nrow(drugs[drugs$Gender == "male",])*100, 2)
+
+print(paste("The share of males who consume soft drugs is equivalent to", 
+            sd_male_share,"%"))
