@@ -64,3 +64,73 @@ sd_male_share <- round(nrow(soft_drug_male_cons)/
 
 print(paste("The share of males who consume soft drugs is equivalent to", 
             sd_male_share,"%"))
+            
+#-------------------------------------------------------------------------------
+
+#Exercise 2 - Share difference between male and female hard drug consumers
+
+hard_drug_male_cons <- drugs[drugs$Gender == "male" & drugs$Hard_Drug == TRUE, ]
+
+hd_male_share <- round(nrow(hard_drug_male_cons)/
+                         nrow(drugs[drugs$Gender == "male",])*100, 2)
+
+hard_drug_female_cons <- drugs[drugs$Gender == "female" & drugs$Hard_Drug == TRUE, ]
+
+hd_female_share <- round(nrow(hard_drug_female_cons)/
+                         nrow(drugs[drugs$Gender == "female",])*100, 2)
+
+hd_dif <- abs(hd_male_share - hd_female_share)
+
+gender_hd_consumption <- data.frame(hd_male_share, hd_female_share, hd_dif)
+
+colnames(gender_hd_consumption) = c("Hard Drug Male Share",
+                                    "Hard Drug Female Share",
+                                    "Difference")
+
+print(gender_hd_consumption)
+
+print(paste(
+  "The share difference in hard drug consumption between males and females is", 
+  hd_dif, "%"))
+
+#-------------------------------------------------------------------------------
+
+#Exercise 3 - Share of soft drug users by age group, focus on young adults
+# we verify that only 3 age categories are present and store them in age_group
+age_group=matrix(levels(factor(drugs$Age, order=TRUE)))
+
+
+#Create an empty matrix
+age_matrix = matrix(NA, nrow=length(age_group), 
+                     ncol=1)
+rownames(age_matrix) <- c(age_group[1:length(age_group),])
+colnames(age_matrix) <- c("Share of Soft Drug Users")
+#Quick Test
+nrow(drugs[drugs$Age == age_group[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Age == age_group[1,] ,])
+
+#For loop to store all the values
+for (i in c(1:length(age_group))){
+  
+  # Calculate the share
+  soft_drug_cons <- drugs[drugs$Age == age_group[i,] & 
+                            drugs$Soft_Drug == TRUE, ]
+  
+  sd_share <- round((nrow(soft_drug_cons)/
+                       nrow(drugs[drugs$Age == age_group[i,] , ]))*100, 2)
+  
+  # store values in a matrix
+  age_matrix[i,] <- sd_share
+  
+}
+
+print(age_matrix)
+
+#Quick check
+nrow(drugs[drugs$Age == age_group[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Soft_Drug == TRUE, ])
+
+# Indeed we observe a strict abandonment of soft drug consumption
+# as age increases. At least as young adults get over 17 years, they
+# don't declare if they consume soft drugs. Could it be that young adults aged
+# 18+ hide their soft drug consumption?
