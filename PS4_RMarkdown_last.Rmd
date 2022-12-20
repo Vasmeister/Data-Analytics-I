@@ -1,0 +1,300 @@
+---
+title: "PS4_RMarkdown___"
+author:
+- "José Maria de Mattamouros Resende Fonseca de Oliveira (22-602-783)"
+- "Linda Fiorina Odermatt (17-946-310)"
+- "Elena Trevisani (22-620-603)"
+- "Vasily Zhuravlev (18-502-401)"
+date: "2022-12-20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r, warning=FALSE, message=FALSE, results=FALSE}
+library(dplyr)
+library(fastDummies)
+library(ggplot2)
+load("~/Desktop/MEcon/II Data Analytics/Tutorial_5/drugs.RData")
+```
+
+# Exercise 1 - Calculate the share of males who consume soft drugs 
+
+```{r}
+soft_drug_male_cons <- drugs[drugs$Gender == "male" & drugs$Soft_Drug == TRUE, ]
+Gender<-drugs$Gender
+Soft_Drug<-drugs$Soft_Drug
+sd_male_share <- round(nrow(soft_drug_male_cons)/
+                         nrow(drugs[drugs$Gender == "male",])*100, 2)
+print(paste("The share of males who consume soft drugs is equivalent to", 
+            sd_male_share,"%"))
+```
+
+# Exercise 2 - Share difference between male and female hard drug consumers
+
+```{r}
+hard_drug_male_cons <- drugs[drugs$Gender == "male" & drugs$Hard_Drug == TRUE, ]
+hd_male_share <- round(nrow(hard_drug_male_cons)/
+                         nrow(drugs[drugs$Gender == "male",])*100, 2)
+hard_drug_female_cons <- drugs[drugs$Gender == "female" & drugs$Hard_Drug == TRUE, ]
+hd_female_share <- round(nrow(hard_drug_female_cons)/
+                         nrow(drugs[drugs$Gender == "female",])*100, 2)
+hd_dif <- abs(hd_male_share - hd_female_share)
+gender_hd_consumption <- data.frame(hd_male_share, hd_female_share, hd_dif)
+colnames(gender_hd_consumption) = c("Hard Drug Male Share",
+                                    "Hard Drug Female Share",
+                                    "Difference")
+print(gender_hd_consumption)
+print(paste(
+  "The share difference in hard drug consumption between males and females is", 
+  hd_dif, "%"))
+```
+
+# Exercise 3 - Share of soft drug users by age group, focus on young adults
+## we verify that only 3 age categories are present and store them in age_group
+
+```{r}
+library(dplyr)
+age_group=matrix(levels(factor(drugs$Age, order=TRUE)))
+#Create an empty matrix
+age_matrix = matrix(NA, nrow=length(age_group), 
+                     ncol=1)
+rownames(age_matrix) <- c(age_group[1:length(age_group),])
+colnames(age_matrix) <- c("Share of Soft Drug Users")
+#Quick Test
+nrow(drugs[drugs$Age == age_group[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Age == age_group[1,] ,])
+#For loop to store all the values
+for (i in c(1:length(age_group))){
+  
+  # Calculate the share
+  soft_drug_cons <- drugs[drugs$Age == age_group[i,] & 
+                            drugs$Soft_Drug == TRUE, ]
+  
+  sd_share <- round((nrow(soft_drug_cons)/
+                       nrow(drugs[drugs$Age == age_group[i,] , ]))*100, 2)
+  
+  # store values in a matrix
+  age_matrix[i,] <- sd_share
+  
+}
+print(age_matrix)
+#Quick check
+nrow(drugs[drugs$Age == age_group[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Soft_Drug == TRUE, ])
+```
+
+At younger age we observe a quite high share of individuals consuming soft drugs (48.5%). Indeed we observe a strict abandonment of soft drug consumption as age increases. At least as young adults get over 17 years, they
+don't declare if they consume soft drugs. Could it be that young adults aged
+18+ hide their soft drug consumption?
+
+# Exercise 4 - Chi squared test
+
+## Part 1 - Earnings and Soft Drug Consumption Table
+
+```{r}
+income_group=matrix(levels(factor(drugs$Earning, order = TRUE)))
+#the data is not ordered...
+#Therefore we need to order manually
+income_group_ordered=matrix(c("<1k USD","1-5k USD", 
+                              "5-10k USD", ">10k USD"))
+#Create an empty matrix
+income_matrix = matrix(NA, nrow=length(income_group), 
+                    ncol=2)
+rownames(income_matrix) <- c("<1k USD","1-5k USD", "5-10k USD", ">10k USD")
+colnames(income_matrix) <- c("TRUE","FALSE")
+#Quick Test
+nrow(drugs[drugs$Earning == income_group_ordered[1,] & drugs$Soft_Drug == TRUE, ])
+nrow(drugs[drugs$Earning == income_group_ordered[1,] ,])
+#For loop to store all the values
+for (i in c(1:length(income_group))){
+  
+  # Calculate the share
+  soft_drug_cons <- drugs[drugs$Earning == income_group_ordered[i,] 
+                          & drugs$Soft_Drug == TRUE, ]
+  
+  sd_share <- round((nrow(soft_drug_cons)/
+                       nrow(drugs[drugs$Earning == income_group_ordered[i,]
+                                  , ]))*100, 2)
+  
+  # store values in a matrix
+  income_matrix[i,1] <- sd_share
+  income_matrix[i,2] <- 100-sd_share
+}
+print(income_matrix)
+```
+
+## Part 2 - Calculate Chi-Squared
+
+```{r}
+chisq.test(x=drugs$Earning, y=drugs$Soft_Drug)
+```
+
+We cannot reject the independence hypothesis as the p-value is lower than
+the 5% threshold.
+
+# Exercise 5 - Random sample with multiple draws
+
+```{r}
+obs_size=500
+multiple_drugs_samples <- matrix(NA, nrow=obs_size, ncol=1)
+sample_numb=500
+#First we convert the string variables to numeric (dummy)
+boolean_sd = as.logical(drugs$Soft_Drug) 
+dummy_sd = as.numeric(boolean_sd)
+set.seed(2122020) # for results replication
+#For loop to generate  a random sample with 500 observations, 500 times
+for (i in 1:sample_numb) {
+  multiple_drugs_samples[i,] = mean(sample(dummy_sd, 
+                                           size=obs_size, replace=TRUE))*100
+  }
+head(multiple_drugs_samples, 5) # Test
+round(mean(multiple_drugs_samples),2) #subsample mean from 500 draws
+round(mean(dummy_sd)*100,2) #population mean
+# We observe that the recorded subsample means are very close to the average
+# soft drug consumption in the full sample. This corresponds to the Central 
+# Limit Theory Hypothesis.
+# Alternative with ggplot for aesthetics
+# Convert matrix to data frame
+df <- as.data.frame(multiple_drugs_samples)
+#Plot
+ggplot(data=df, aes(x=V1)) + 
+  geom_histogram(binwidth= 1 , color = "darkblue", fill = "lightblue") +
+  ggtitle("Histogram for Soft Drug Use (obs = 500, draws = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  geom_vline(xintercept=mean(df$V1), col="red") +
+  geom_vline(xintercept=median(df$V1), col="purple") + theme_bw()
+```
+
+# Exercise 6 - Comparing random samples
+
+# Part 1. Creating a function to generate random samples and print mean of each
+# subsample
+
+```{r}
+set.seed(2122020) # for replication of results
+subsample_mean=function(data, variable, sample.size, ndraws)
+{
+  subsample_mean= matrix(NA, nrow=ndraws, ncol=1)
+# Transform character variables into boolean 
+if (class(variable) == "character"){
+  boolean = as.logical(variable) 
+  dummy = as.numeric(boolean)
+  
+  # Calculate the mean of each subsample with for loop
+  for (i in 1:ndraws) {
+    subsample_mean[i,] = mean(sample(dummy, sample.size, replace=TRUE))*100
+  }
+}
+else if (class(variable) == "logical"){
+  dummy = as.numeric(variable)
+  for (i in 1:ndraws) {
+    subsample_mean[i,] = mean(sample(dummy, sample.size, replace=TRUE))*100
+  }
+}
+else{for (i in 1:ndraws) {
+  subsample_mean[i,] = mean(sample(variable, sample.size, replace=TRUE))*100
+  }}
+  
+  return(subsample_mean)
+}
+#Testing the function
+mean(subsample_mean(drugs, drugs$Hard_Drug, 1500, 100))
+mean(subsample_mean(drugs, drugs$Soft_Drug, 500, 1000))
+```
+
+# Part 2. Run the function for different sample sizes and number of draws
+
+```{r}
+N_runs = c(100, 500, 2500)
+sample_sizes=  c(100, 500, 2500)
+mx_samples = matrix(data=NA, nrow=length(sample_sizes), ncol=length(N_runs))
+rownames(mx_samples) = sample_sizes
+colnames(mx_samples) = N_runs
+set.seed(2122020) # for replication of results
+for (j in 1:length(N_runs)){
+  for (i in 1:length(sample_sizes)){
+    mx_samples[i,j] <- round(mean(subsample_mean(drugs, drugs$Soft_Drug, 
+                          sample_sizes[i], N_runs[j])),2)
+  }
+}
+#Print results
+print(mx_samples)
+```
+
+# Part 3. Demonstrating CLT with graphs
+
+```{r}
+# Create matrix (ndraws=500, for 3 different subsample sizes )
+mx_samples_500ndraws <- matrix(data=NA, nrow=500, 
+                               ncol=length(sample_sizes))
+colnames(mx_samples_500ndraws) <-sample_sizes
+for (i in 1:length(sample_sizes)){
+    mx_samples_500ndraws[,i] <-subsample_mean(drugs, drugs$Soft_Drug, 
+                                              sample_sizes[i], 500)
+  }
+rep(colnames(mx_samples_500ndraws))
+length(c(mx_samples_500ndraws))
+# Convert matrix to data frame for plotting
+model_var <- c(rep("sample size = 100",nrow(mx_samples_500ndraws)), 
+               rep("sample size = 500",nrow(mx_samples_500ndraws)),
+               rep("sample size = 2500",nrow(mx_samples_500ndraws)))
+hist.plot <- data.frame("Share of Soft Drug Users (%)" = 
+                          c(mx_samples_500ndraws), 
+                        "models" = model_var)
+# Plot Histogram 
+ggplot(data=hist.plot, aes(x=c(mx_samples_500ndraws), col=model_var, 
+                           fill=model_var)) + 
+  ggtitle("Histogram for Soft Drug Use (Draws = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  ylab("Density")+
+  geom_density(alpha=0.1) + 
+  theme_bw()
+```
+
+We observe that as we increase the sample size, the distribution of averages
+is more normal and we have get variance (i.e., the line gets narrower). 
+This goes in line with the Central Limit Theorem for randomly distributed 
+data. Asymptotically, the subsample averages tend to the actual mean of the
+full data.
+
+```{r, warning=FALSE, message=FALSE, results=FALSE}
+# Create matrix (ndraws=variables, for subsample size=500 )
+mx_samples_500sample <- matrix(data=NA, nrow=sum(N_runs), ncol=2)
+#store N_runs values for each row
+mx_samples_500sample[(1:100),2] <- "100"
+mx_samples_500sample[(101:600),2] <- "500"
+mx_samples_500sample[(601:3100),2] <- "2500"
+x1 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 100)
+x2 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 500)
+x3 <- subsample_mean(drugs, drugs$Soft_Drug, 500, 2500)
+#convert into 1 column matrix with sum(N_runs) rows
+mx_samples_500sample[,1] <- as.numeric(cbind(c(x1,x2,x3)))
+mx_samples_500sample[,2]
+```
+
+```{r}
+# Convert to data frame for plotting
+df_ndraws_500samples <- as.data.frame(x=mx_samples_500sample)
+subsample_m <- as.numeric(df_ndraws_500samples$V1)
+ndraws <- df_ndraws_500samples$V2
+# Plot Histogram 
+ggplot(data=df_ndraws_500samples, aes(x=subsample_m, 
+                                      col=ndraws ,
+                                      fill=ndraws)) + 
+  ggtitle("Histogram for Soft Drug Use (Subsample Size = 500)")+
+  xlab("Subsample mean of Soft Drug Use (%)") + 
+  ylab("Density")+
+  geom_vline(xintercept=(mean(dummy_sd)*100), col="red")+
+  geom_density(alpha=0.05) + 
+  theme_bw()
+```
+
+We observe that as we increase the number of draws for a fixed sample, 
+the distribution of subsample averages remains mostly consistent (i.e., 
+no evident skewness). Since the draws are random, we don't observe bias in 
+the mean (i.e., it's remains consistent for all number of draws). 
+Asymptotically, as the number of draws tends to infinity, the mean distribution 
+remains consistent if the estimator is unbiased. This demonstrates that for
+even small number of draws with random subsamples, one should be able to 
+obtain the unbiased estimator.
