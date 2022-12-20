@@ -16,13 +16,11 @@ output: pdf_document
 # Exercise 1 - Calculate the share of males who consume soft drugs 
 
 ```{r}
-Gender = drugs[Gender]
-Soft_Drug = drugs$Soft_Drug
-
-soft_drug_male_cons <- drugs[Gender == "male" & Soft_Drug == TRUE, ]
-
+soft_drug_male_cons <- drugs[drugs$Gender == "male" & drugs$Soft_Drug == TRUE, ]
+Gender<-drugs$Gender
+Soft_Drug<-drugs$Soft_Drug
 sd_male_share <- round(nrow(soft_drug_male_cons)/
-                         nrow(drugs[Gender == "male",])*100, 2)
+                         nrow(drugs[drugs$Gender == "male",])*100, 2)
 
 print(paste("The share of males who consume soft drugs is equivalent to", 
             sd_male_share,"%"))
